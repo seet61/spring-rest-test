@@ -29,7 +29,14 @@ public class BookmarkRestController {
     Collection<Bookmark> readBookmarks(@PathVariable String userId, @RequestBody Bookmark input){
         this.validateUser(userId);
 
-        return (Collection<Bookmark>) this.accountRepository.findByUsername(userId)
+        return this.bookmarkRepository.findByAccountUsername(userId);
+    }
+
+    @PostMapping
+    ResponseEntity<?> add(@PathVariable String userId, @RequestBody Bookmark input) {
+        this.validateUser(userId);
+
+        return this.accountRepository.findByUsername(userId)
                 .map(account -> {
                     Bookmark result = this.bookmarkRepository.save(new Bookmark(account, input.getUri(), input.getDescription()));
                     URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
