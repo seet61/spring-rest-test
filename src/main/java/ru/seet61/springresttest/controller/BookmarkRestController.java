@@ -14,7 +14,7 @@ import java.net.URI;
 import java.util.Collection;
 
 @RestController
-@RequestMapping("/bookmarks/{userId}")
+@RequestMapping("/bookmarks/{userName}")
 public class BookmarkRestController {
     private final BookmarkRepository bookmarkRepository;
     private final AccountRepository accountRepository;
@@ -26,17 +26,17 @@ public class BookmarkRestController {
     }
 
     @GetMapping
-    Collection<Bookmark> readBookmarks(@PathVariable String userId, @RequestBody Bookmark input){
-        this.validateUser(userId);
+    Collection<Bookmark> readBookmarks(@PathVariable String userName){
+        this.validateUser(userName);
 
-        return this.bookmarkRepository.findByAccountUsername(userId);
+        return this.bookmarkRepository.findByAccountUsername(userName);
     }
 
     @PostMapping
-    ResponseEntity<?> add(@PathVariable String userId, @RequestBody Bookmark input) {
-        this.validateUser(userId);
+    ResponseEntity<?> add(@PathVariable String userName, @RequestBody Bookmark input) {
+        this.validateUser(userName);
 
-        return this.accountRepository.findByUsername(userId)
+        return this.accountRepository.findByUsername(userName)
                 .map(account -> {
                     Bookmark result = this.bookmarkRepository.save(new Bookmark(account, input.getUri(), input.getDescription()));
                     URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
@@ -46,19 +46,19 @@ public class BookmarkRestController {
     }
 
     @GetMapping("/{bookmarkId}")
-    Bookmark readBookmark(@PathVariable String userId, @PathVariable Long bookmarkId) {
-        this.validateUser(userId);
+    Bookmark readBookmark(@PathVariable String userName, @PathVariable Long bookmarkId) {
+        this.validateUser(userName);
 
         return this.bookmarkRepository.findById(bookmarkId).orElseThrow(() -> new BookmarkNotFoundException(bookmarkId));
     }
 
     /**
-     * Verify the {@literal userId} exists.
+     * Verify the {@literal userName} exists.
      *
-     * @param userId
+     * @param userName
      */
-    private void validateUser(String userId) {
-        this.accountRepository.findByUsername(userId).orElseThrow(() -> new UserNotFoundException(userId));
+    private void validateUser(String userName) {
+        this.accountRepository.findByUsername(userName).orElseThrow(() -> new UserNotFoundException(userName));
     }
 
 

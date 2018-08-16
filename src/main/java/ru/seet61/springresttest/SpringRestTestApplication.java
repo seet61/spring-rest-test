@@ -19,11 +19,6 @@ import java.util.TimeZone;
 
 @SpringBootApplication
 public class SpringRestTestApplication {
-	@PostConstruct
-	public void init(){
-		TimeZone.setDefault(TimeZone.getTimeZone("Europe/Moscow"));   // It will set Europe/Moscow timezone
-		System.out.println("Spring boot application running in Europe/Moscow timezone :"+new Date());   // It will print Europe/Moscow timezone
-	}
 
 	public static void main(String[] args) {
 		SpringApplication.run(SpringRestTestApplication.class, args);
@@ -37,6 +32,7 @@ public class SpringRestTestApplication {
 						System.out.println(username + " " + accountRepository.findByUsername(username).isPresent());
 						if (!accountRepository.findByUsername(username).isPresent()) {
 							Account account = accountRepository.save(new Account(username, "password"));
+							System.out.println(bookmarkRepository.toString());
 							bookmarkRepository.save(new Bookmark(account, "http://bookmark.com/1/" + username, "A description one"));
 							bookmarkRepository.save(new Bookmark(account, "http://bookmark.com/2/" + username, "A description two"));
 						}
